@@ -3,46 +3,37 @@ const { v4: uuidv4 } = require('uuid');
 
 class User {
 
-    constructor(username, email, verified) {
+    constructor(id, username, email, verified, updated_at, created_at) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.verified = verified;
+        this.updated_at = updated_at;
+        this.created_at = created_at;
     }
 
-    async saveWithPassword(password) {
-
-        if (! this.username) {
-            throw new Error('Missing Username in User class while calling saveWithPassword()')
-        }
-
-        if (! this.email) {
-            throw new Error('Missing Email in User class while calling saveWithPassword()')
-        }
-
-        if (! password) {
-            throw new Error('Missing Password in User class while calling saveWithPassword()')
-        }
+    static async createAndSave(username, email, password) {
 
         await db.execute(`INSERT INTO users (username, password, email) VALUES (?, ?, ?); `,
-            [this.username, password, this.email]
+            [username, password, email]
         );
 
         const [rows] = await db.execute(`
-            SELECT id from users
+            SELECT * from users
             WHERE username = ?;
-        `, [this.username]);
+        `, [username]);
 
         if (rows <= 0) {
             throw new Error('An Error Occured when creating verify token.');
         }
 
-        this.token = uuidv4();
+        const token = uuidv4();
 
         await db.execute(`INSERT INTO user_verify_tokens (user_id, token) VALUES (?, ?); `,
-            [rows[0].id, this.token]
+            [rows[0].id, token]
         );
 
-        return this
+        return {user: init(rows[0]), token: token};
     };
 
     async verify(token) {
@@ -87,7 +78,7 @@ class User {
             return null;
         }
 
-        return initUser(rows[0]);
+        return init(rows[0]);
     };
 
     static async findByEmail(email) {
@@ -100,7 +91,7 @@ class User {
             return null;
         }
 
-        return initUser(rows[0]);
+        return init(rows[0]);
     };
 
     static async getByUsernameAndPassword(username, password) {
@@ -114,12 +105,12 @@ class User {
             return null;
         }
 
-        return initUser(rows[0]);
+        return init(rows[0]);
     };
 }
 
-function initUser(user) {
-    return new User(user.username, user.email, user.verified);
+function init(user) {
+    return new User(user.id, user.username, user.email, user.verified, user.updated_at, user.created_at);
 }
 
 module.exports = User;

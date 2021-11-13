@@ -29,12 +29,13 @@ exports.postLogin = async (req, res, next) => {
             res.status(403);
             throw new Error('Please verify email before logging in.');
         }
+
     } catch (err) {
         next(err);
         return;
     }
 
-    successResponse(user.username, res);
+    successResponse(user.username, user.id, res);
 };
 
 exports.postCreateAccount = async (req, res, next) => {
@@ -58,19 +59,17 @@ exports.postCreateAccount = async (req, res, next) => {
             throw new Error('Username taken. Please try a different username');
         }
 
-        let user = new User(username, email);
-        user = await user.saveWithPassword(password);
+        const {user, token} = await User.createAndSave(username, email, password);
 
         // send verification email
         const mail = new Mail(email, 'Please Activate your Notification Signal Account', 'verify.html', {
             username: user.username,
-            token: user.token,
+            token: token,
             host: process.env.PUBLIC_URL
         });
 
         mail.send()
 
-         // Return token and Username
         res.json({
             ok: true,
             message: `An Email has been sent to ${email}. Please verify before logging in.`,
@@ -109,13 +108,17 @@ exports.postVerifyAccount = async (req, res, next) => {
         return next(err);
     }
 
-    successResponse(user.username, res);
+    res.json({
+        ok: true,
+        message: `Account with email ${email} has been verified. Please log in.`,
+        username: user.username,
+    });
 };
 
-function successResponse(username, res) {
+function successResponse(username, id, res) {
     // Create base token
     let token = jwt.sign(
-        { username: username },
+        { username: username, id: id },
         process.env.TOKEN_SECRET,
         { expiresIn: '7d' }
     );

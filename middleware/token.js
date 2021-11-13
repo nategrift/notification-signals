@@ -30,7 +30,7 @@ const checkToken = (req, res, next) => {
         });
       } else {
         req.username = decoded.username;
-        req.uuid = decoded.uuid;
+        req.id = decoded.id;
         next();
       }
     });

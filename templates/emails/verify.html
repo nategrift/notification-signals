@@ -10,12 +10,21 @@
     <main>
         Dear {{ username }},
         <br><br>
-        Please activate you account by clicking the link!
+        <p>Please activate you account by clicking the link!</p>
+        <br><br>
         <form action="{{ host }}/verify-account/{{ token }}">
             <input type="submit" value="Verify Account" />
         </form>
+        <br><br>
+        <br><br>
+        <p>Please activate you account by clicking the link!</p>
+        <br><br>
+        <code>© Notification Signal 2021</code>
     </main>
     <style>
+        form input {
+            padding: 10px;
+        }
     </style>
 </body>
 </html>
