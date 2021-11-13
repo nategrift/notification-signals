@@ -16,7 +16,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors())
 app.use(helmet())
 
-app.use(require('./routes'))
+const apiRoutes = require('./routes/api');
+app.use('/api', apiRoutes);
+
+
+const errorController = require('./controllers/errorController');
+app.use(errorController.catchErrors);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
