@@ -3,9 +3,10 @@ const { v4: uuidv4 } = require('uuid');
 
 class User {
 
-    constructor(username, email) {
+    constructor(username, email, verified) {
         this.username = username;
         this.email = email;
+        this.verified = verified;
     }
 
     async saveWithPassword(password) {
@@ -118,7 +119,7 @@ class User {
 }
 
 function initUser(user) {
-    return new User(user.username, user.email);
+    return new User(user.username, user.email, user.verified);
 }
 
 module.exports = User;
