@@ -1,7 +1,9 @@
 const express = require('express');
 
 const authRoutes = require('./auth');
+
 const projectsController = require('../controllers/projectsController');
+const apiKeysController = require('../controllers/apiKeysController');
 
 const tokensMiddleware = require('../middleware/token.js');
 
@@ -15,15 +17,13 @@ router.use('/auth', authRoutes);
 //
 router.get('/projects', tokensMiddleware.checkToken, projectsController.getProjects);
 router.post('/projects/create', tokensMiddleware.checkToken, projectsController.postCreateProject);
-
-// router.post('/projects/:projectId', tokensMiddleware.checkToken, projectsController.postUpdateProject);
-// router.delete('/projects/:projectId', tokensMiddleware.checkToken, projectsController.deleteProject);
+router.delete('/projects/:project', tokensMiddleware.checkToken, projectsController.deleteProject);
 
 //
 // API KEYS
 //
-router.get('/projects/keys', tokensMiddleware.checkToken, projectsController.getKeys);
-router.post('/projects/keys/create', tokensMiddleware.checkToken, projectsController.postCreateKeys);
-router.delete('/projects/:projectId', tokensMiddleware.checkToken, projectsController.deleteProject);
+router.get('/projects/:project/keys', tokensMiddleware.checkToken, apiKeysController.getKeys);
+router.post('/projects/:project/keys/create', tokensMiddleware.checkToken, apiKeysController.postCreateKey);
+router.delete('/projects/:project/keys/:key', tokensMiddleware.checkToken, apiKeysController.deleteKey);
 
 module.exports = router;

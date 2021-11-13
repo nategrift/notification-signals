@@ -36,21 +36,23 @@ exports.postCreateProject = async (req, res, next) => {
     }
 };
 
-exports.postUpdateProject = async (req, res, next) => {
-    try {
-        const folder = new Folder(null, req.body.title, 1);
-        await folder.saveInFolder(req.params.folder);
-
-        res.status(201).json(folder);
-    } catch (err) {
-        return next(err);
-    }
-};
-
 exports.deleteProject = async (req, res, next) => {
     try {
-        await Folder.deleteById(req.params.folder);
-        res.status(200).json(true);
+        if (!req.params.project) {
+            res.status(404)
+        }
+
+        const existingProject = await Project.findById(req.params.project);
+        if (! existingProject || existingProject.created_by_id != req.id) {
+            res.status(403);
+            throw new Error('Unable to delete this Project');
+        }
+
+        existingProject.delete()
+
+        res.status(201).json({
+            ok: true
+        });
     } catch (err) {
         return next(err);
     }

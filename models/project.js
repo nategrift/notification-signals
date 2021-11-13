@@ -34,7 +34,8 @@ class Project {
         const [rows] = await db.execute(`
             SELECT * from projects
             WHERE UPPER(name) = UPPER(?)
-            AND created_by_id = ?;
+            AND created_by_id = ?
+            AND deleted_at IS NULL;
         `, [name, userId]);
 
         if (rows <= 0) {
@@ -47,7 +48,8 @@ class Project {
     static async findAllForUser(userId) {
         const [rows] = await db.execute(`
             SELECT * from projects
-            WHERE created_by_id = ?;
+            WHERE created_by_id = ?
+            AND deleted_at IS NULL;
         `, [userId]);
 
         if (rows <= 0) {
@@ -56,10 +58,35 @@ class Project {
 
         return rows;
     };
+
+    static async findById(projectId) {
+        const [rows] = await db.execute(`
+            SELECT * from projects
+            WHERE id = ?
+            AND deleted_at IS NULL;
+        `, [projectId]);
+
+        if (rows <= 0) {
+            return null;
+        }
+
+        return init(rows[0]);
+    };
+
+    async delete() {
+        const [rows] = await db.execute('UPDATE projects SET deleted_at = Now() WHERE id = ?;',
+        [this.id]);
+
+      if (rows.affectedRows !== 1) {
+        throw new Error('Error deleting project')
+      } else {
+        return true
+      }
+    };
 }
 
 function init(project) {
-    return new Project(project.id, project.name, project.locked, project.update_at, project.created_at, project.deleted_at);
+    return new Project(project.id, project.name, project.locked, project.created_by_id, project.update_at, project.created_at, project.deleted_at);
 }
 
 module.exports = Project;
