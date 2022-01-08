@@ -7,9 +7,11 @@ ssh -t vps '
 
 cd notification-signals
 
+cd server
+
 git pull origin main
 
-server/update.sh
+./update.sh
 '
 
 time_end=`date +%s`
