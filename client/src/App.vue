@@ -1,20 +1,8 @@
 <template>
-  <div class="container">
-    <Nav />
-    <router-view />
-  </div>
+<div class="container">
+  <router-view />
+</div>
 </template>
-
-<script>
-import Nav from '@/components/Nav.vue'
-
-export default {
-  name: 'app',
-  components: {
-    Nav
-  }
-}
-</script>
 
 <style lang="scss">
 #app {
@@ -23,10 +11,19 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #F8F8FB;
+  width: 100%;
+  height: 100vh;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 10rem auto;
+body {
+  padding: 0;
+  margin: 0;
 }
+
+h1, h2, h3, h4, h5, p {
+  padding: 0;
+  margin: 0;
+}
+
 </style>

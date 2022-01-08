@@ -9,7 +9,6 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 
-// Parse the body for incoming post requests
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -19,6 +18,8 @@ app.use(helmet())
 const apiRoutes = require('./routes/api');
 app.use('/api', apiRoutes);
 
+const publicRoutes = require('./routes/public');
+app.use('/', publicRoutes);
 
 const errorController = require('./controllers/errorController');
 app.use(errorController.catchErrors);

@@ -1,6 +1,5 @@
 const Project = require('../models/project')
 
-
 exports.getProjects = async (req, res, next) => {
     try {
         const projects = await Project.findAllForUser(req.id);
@@ -48,7 +47,7 @@ exports.deleteProject = async (req, res, next) => {
             throw new Error('Unable to delete this Project');
         }
 
-        existingProject.delete()
+        await existingProject.delete()
 
         res.status(201).json({
             ok: true

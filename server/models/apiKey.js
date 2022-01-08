@@ -51,8 +51,24 @@ class ApiKey {
         const [rows] = await db.execute(`
             SELECT * from api_keys
             WHERE id = ?
-            AND deleted_at IS NULL;
+            AND deleted_at IS NULL
+            LIMIT 1;
         `, [apiKeyId]);
+
+        if (rows <= 0) {
+            return null;
+        }
+
+        return init(rows[0]);
+    };
+
+    static async findByApiKey(apiKey) {
+        const [rows] = await db.execute(`
+            SELECT * from api_keys
+            WHERE api_key = ?
+            AND deleted_at IS NULL
+            LIMIT 1;
+        `, [apiKey]);
 
         if (rows <= 0) {
             return null;
