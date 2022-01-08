@@ -19,6 +19,7 @@ exports.getSendNotification = async (req, res, next) => {
 };
 
 async function sendNotification(res, key, title, message, color) {
+    console.log(key, title, message);
     if (!key) {
         res.status(400);
         throw new Error('Please provide api key.');
