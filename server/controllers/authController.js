@@ -80,26 +80,27 @@ exports.postCreateAccount = async (req, res, next) => {
     }
 };
 
-exports.postVerifyAccount = async (req, res, next) => {
-    let email = req.body.email;
-    let token = req.body.token;
-
-    const errors = validationResult(req);
-    if (! errors.isEmpty()) {
-        res.status(400).json({
-            ok: false,
-            errors: errors.array()
-        });
-    }
+exports.getVerifyAccount = async (req, res, next) => {
+    let email = req.query.email;
+    let token = req.query.token;
 
     let user;
 
     try {
+        if (!token || token.length != 36) {
+            res.status(400);
+            throw new Error('Please provide a valid token.')
+        }
+
+        if (!email || !email.includes("@") || email.length < 4) {
+            res.status(400);
+            throw new Error('Please provide a valid email.')
+        }
         // check if user exists
         user = await User.findByEmail(email);
         if (! user) {
             res.status(403);
-            throw new Error('An Error has occured. Please try again later');
+            throw new Error('This account has not been registered. Please create an account first.');
         }
 
         await user.verify(token);
