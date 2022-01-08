@@ -2,6 +2,10 @@
 
 cd server
 
+echo "hello"
+
+cat "hey"
+
 npm install --only=prod
 
 node migration.js up
