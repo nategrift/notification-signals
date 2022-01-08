@@ -1,6 +1,6 @@
 const Project = require('../models/project');
 const Service = require('../models/service');
-const ServiceTypes = require('../models/ServiceTypes');
+const ServiceTypes = require('../models/serviceTypes');
 
 SERVICE_CONFIG_REQUIREMENTS = {
     'discord': ['channel_id']
