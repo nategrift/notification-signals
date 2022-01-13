@@ -12,9 +12,8 @@
         <br><br>
         <p>Please activate you account by clicking the link!</p>
         <br><br>
-        <form action="{{ host }}/verify-account/{{ token }}">
-            <input type="submit" value="Verify Account" />
-        </form>
+        <!-- Will eventually remove the /api/auth/ part of the url to go to the site.-->
+        <a href="{{ host }}/api/auth/verify-account?email={{ email }}&token={{ token }}" target="_blank">Verify Account</a>
         <br><br>
         <br><br>
         <p>Please activate you account by clicking the link!</p>

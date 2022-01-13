@@ -59,22 +59,36 @@ exports.postCreateAccount = async (req, res, next) => {
             throw new Error('Username taken. Please try a different username');
         }
 
-        const {user, token} = await User.createAndSave(username, email, password);
+        if (process.env.NODE_ENV == 'production') {
 
-        // send verification email
-        const mail = new Mail(email, 'Please Activate your Notification Signal Account', 'verify.html', {
-            username: user.username,
-            token: token,
-            host: process.env.PUBLIC_URL
-        });
+            const {user, token} = await User.createAndSaveWithVerification(username, email, password);
 
-        mail.send()
+            // send verification email
+            const mail = new Mail(email, 'Please Activate your Notification Signal Account', 'verify.html', {
+                username: user.username,
+                token: token,
+                email: user.email,
+                host: process.env.PUBLIC_URL
+            });
 
-        res.json({
-            ok: true,
-            message: `An Email has been sent to ${email}. Please verify before logging in.`,
-            username: username,
-        });
+            mail.send()
+
+            res.json({
+                ok: true,
+                message: `An Email has been sent to ${email}. Please verify before logging in.`,
+                username: username,
+            });
+        } else {
+            const user = await User.createAndSave(username, email, password);
+
+            res.json({
+                ok: true,
+                message: `DEV: Verified account has been created.`,
+                username: username,
+                user: user
+            });
+        }
+
     } catch (err) {
         return next(err);
     }

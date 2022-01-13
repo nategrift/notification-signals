@@ -12,7 +12,7 @@ class User {
         this.created_at = created_at;
     }
 
-    static async createAndSave(username, email, password) {
+    static async createAndSaveWithVerification(username, email, password) {
 
         await db.execute(`INSERT INTO users (username, password, email) VALUES (?, ?, ?); `,
             [username, password, email]
@@ -24,7 +24,7 @@ class User {
         `, [username]);
 
         if (rows <= 0) {
-            throw new Error('An Error Occured when creating verify token.');
+            throw new Error('An Error Occured when creating account.');
         }
 
         const token = uuidv4();
@@ -34,6 +34,23 @@ class User {
         );
 
         return {user: init(rows[0]), token: token};
+    };
+
+    static async createAndSave(username, email, password) {
+
+        await db.execute(`INSERT INTO users (username, password, email, verified) VALUES (?, ?, ?, NOW()); `,
+            [username, password, email]
+        );
+
+        const [rows] = await db.execute(`
+            SELECT * from users
+            WHERE username = ?;
+        `, [username]);
+
+        if (rows <= 0) {
+            throw new Error('An Error Occured when creating account.');
+        }
+        return init(rows[0])
     };
 
     async verify(token) {
