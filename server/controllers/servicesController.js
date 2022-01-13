@@ -8,7 +8,6 @@ SERVICE_CONFIG_REQUIREMENTS = {
 
 exports.postCreateService = async (req, res, next) => {
     try {
-        // check project and permissions
         if (!req.params.project) {
             res.status(404)
             throw new Error('Missing Project Id');
@@ -26,7 +25,7 @@ exports.postCreateService = async (req, res, next) => {
         // check service type
         if (!serviceType || !config || !config instanceof Object) {
             res.status(403);
-            throw new Error('Missing service_type or config object.');
+            throw new Error('Missing service type or config object.');
         }
 
         const serviceTypes = await ServiceTypes.fetchAll();
@@ -59,8 +58,8 @@ exports.postCreateService = async (req, res, next) => {
 
         res.status(201).json({
             ok: true,
-            message: "Message Sent",
-            service: createdService
+            message: "Service Created",
+            data: createdService
         });
 
     } catch (err) {
@@ -90,7 +89,8 @@ exports.deleteService = async (req, res, next) => {
         await existingService.delete();
 
         res.status(201).json({
-            ok: true
+            ok: true,
+            message: "Service Deleted",
         });
     } catch (err) {
         return next(err);
@@ -109,12 +109,12 @@ exports.getServices = async (req, res, next) => {
 
         if (! services) {
             res.status(404);
-            throw new Error('Unabble to get Services');
+            throw new Error('Unable to get Services');
         }
 
         res.status(200).json({
             ok: true,
-            services: services
+            data: services
         });
     } catch (err) {
         return next(err);

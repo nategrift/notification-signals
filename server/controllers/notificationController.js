@@ -19,7 +19,6 @@ exports.getSendNotification = async (req, res, next) => {
 };
 
 async function sendNotification(res, key, title, message, color) {
-    console.log(key, title, message);
     if (!key) {
         res.status(400);
         throw new Error('Please provide api key.');
@@ -43,6 +42,7 @@ async function sendNotification(res, key, title, message, color) {
 
     await NotificationService.sendNotifications(apiKey, title, message, color)
 
+    // should eventually show what services the message was sent too.
     res.status(201).json({
         ok: true,
         message: "Message Sent"

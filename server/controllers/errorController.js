@@ -8,7 +8,7 @@ exports.catchErrors = (error, req, res, next) => {
 
     // if error connecting to database
     if (error.message.includes('ECONNREFUSED')) {
-        error = "Error: Unable to connect to Database, Sorry for the inconvenience. Please try again later";
+        error.message = "Unable to connect to Database, Sorry for the inconvenience. Please try again later";
     }
 
     if (!res.status) {
@@ -17,13 +17,13 @@ exports.catchErrors = (error, req, res, next) => {
 
     return res.json({
         ok: false,
-        message: error.message,
+        error: error.message,
     });
 };
 
 exports.get404 = (req, res, next) => {
-    return res.json({
+    return res.status(404).json({
         ok: false,
-        message: 'Unable to Find Resource',
+        error: 'Unable to Find Resource',
     });
 };

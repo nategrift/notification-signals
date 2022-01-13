@@ -37,11 +37,12 @@ exports.postCreateKey = async (req, res, next) => {
             throw new Error('Unable to create API Key for this Project');
         }
 
-        await ApiKey.createAndSave(req.params.project, req.id);
+        const apiKey = await ApiKey.createAndSave(req.params.project, req.id);
 
         res.status(201).json({
             ok: true,
-            message: "Api Key Created"
+            message: "Api Key Created",
+            data: apiKey
         });
     } catch (err) {
         return next(err);
