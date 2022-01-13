@@ -13,3 +13,4 @@ Goal of this project is to learn the following goals. In addition, I hope to use
     - Android?
 - Explore statistics and tracking how many records
 - Explore API keys and better security
+- Explore JWT tokens
