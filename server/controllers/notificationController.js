@@ -1,5 +1,6 @@
 const ApiKey = require('../models/apiKey');
 const Project = require('../models/project');
+const Service = require('../models/service');
 const NotificationService = require('../services/NotificationService');
 
 exports.postSendNotification = async (req, res, next) => {
@@ -30,9 +31,15 @@ async function sendNotification(res, key, title, message, color) {
     }
 
     const project = await Project.findById(apiKey.project_id);
-    if (!project || project.locked) {
+    if (!project) {
         res.status(400);
-        throw new Error('Api Key not valid');
+        throw new Error('Api Key not validsssss');
+    }
+
+    const services = await Service.findAllForProjectId(apiKey.project_id)
+    if (!services) {
+        res.status(400);
+        throw new Error('Please create a service before sending a message');
     }
 
     if (!title || !message) {

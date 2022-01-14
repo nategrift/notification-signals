@@ -4,10 +4,11 @@ const { v4: uuidv4 } = require('uuid');
 
 class ApiKey {
 
-    constructor(id, project_id, api_key, locked, created_by_id, update_at, created_at, deleted_at) {
+    constructor(id, project_id, api_key, name, locked, created_by_id, update_at, created_at, deleted_at) {
         this.id = id;
         this.project_id = project_id;
         this.api_key = api_key;
+        this.name = name;
         this.locked = locked;
         this.created_by_id = created_by_id;
         this.update_at = update_at;
@@ -15,10 +16,10 @@ class ApiKey {
         this.deleted_at = deleted_at;
     }
 
-    static async createAndSave(projectId, userId) {
+    static async createAndSave(projectId, userId, name) {
 
-        const [stats] = await db.execute(`INSERT INTO api_keys (project_id, api_key, created_by_id) VALUES (?, ?, ?); `,
-            [projectId, uuidv4(), userId]
+        const [stats] = await db.execute(`INSERT INTO api_keys (project_id, api_key, name, created_by_id) VALUES (?, ?, ?, ?); `,
+            [projectId, uuidv4(), name, userId]
         );
 
         const [rows] = await db.execute(`
@@ -90,7 +91,7 @@ class ApiKey {
 }
 
 function init(apiKey) {
-    return new ApiKey(apiKey.id, apiKey.project_id, apiKey.api_key, apiKey.locked, apiKey.created_by_id, apiKey.update_at, apiKey.created_at, apiKey.deleted_at);
+    return new ApiKey(apiKey.id, apiKey.project_id, apiKey.api_key, apiKey.name, apiKey.locked, apiKey.created_by_id, apiKey.update_at, apiKey.created_at, apiKey.deleted_at);
 }
 
 module.exports = ApiKey;

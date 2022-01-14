@@ -2,19 +2,18 @@ const Project = require('../models/project')
 
 exports.getProjects = async (req, res, next) => {
     try {
-        const projects = await Project.findAllForUser(req.id);
+        const projects = await Project.findAllForUserWithStatistics(req.id);
 
         if (!projects) {
             res.status(201).json({
                 ok: true,
                 message: "No projects at this time. Please create one and come back.",
-                data: projects
             });
         }
 
         res.status(200).json({
             ok: true,
-            projects: projects
+            data: projects
         });
     } catch (err) {
         return next(err);

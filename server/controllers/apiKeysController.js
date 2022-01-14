@@ -29,6 +29,12 @@ exports.postCreateKey = async (req, res, next) => {
     try {
         if (! req.params.project) {
             res.status(404)
+            throw new Error('Missing product in url param.');
+        }
+
+        if (! req.body.name) {
+            res.status(400)
+            throw new Error('Please include a name to create a apiKey.');
         }
 
         const project = await Project.findById(req.params.project);
@@ -37,7 +43,7 @@ exports.postCreateKey = async (req, res, next) => {
             throw new Error('Unable to create API Key for this Project');
         }
 
-        const apiKey = await ApiKey.createAndSave(req.params.project, req.id);
+        const apiKey = await ApiKey.createAndSave(req.params.project, req.id, req.body.name);
 
         res.status(201).json({
             ok: true,

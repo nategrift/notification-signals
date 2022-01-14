@@ -59,6 +59,23 @@ class Project {
         return rows;
     };
 
+    static async findAllForUserWithStatistics(userId) {
+        const [rows] = await db.execute(`
+            SELECT projects.*, COUNT(DISTINCT notifications.id) as notification_count from projects
+            LEFT JOIN notifications
+            ON notifications.project_id = projects.id
+            WHERE created_by_id = ?
+            AND deleted_at IS NULL
+            GROUP BY projects.id;
+        `, [userId]);
+
+        if (rows <= 0) {
+            return null;
+        }
+
+        return rows;
+    };
+
     static async findById(projectId) {
         const [rows] = await db.execute(`
             SELECT * from projects
