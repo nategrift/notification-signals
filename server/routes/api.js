@@ -1,41 +1,34 @@
 const express = require('express');
 
-const authRoutes = require('./auth');
-
 const projectsController = require('../controllers/projectsController');
 const apiKeysController = require('../controllers/apiKeysController');
 const servicesController = require('../controllers/servicesController');
 
-const tokensMiddleware = require('../middleware/token.js');
-
 const router = express.Router();
-
-// auth routes
-router.use('/auth', authRoutes);
 
 /*
  * PROJECT
  */
-router.get('/projects', tokensMiddleware.checkToken, projectsController.getProjects);
-router.post('/projects/create', tokensMiddleware.checkToken, projectsController.postCreateProject);
+router.get('/projects', projectsController.getProjects);
+router.post('/projects/create', projectsController.postCreateProject);
 // update project
-router.delete('/projects/:project', tokensMiddleware.checkToken, projectsController.deleteProject);
+router.delete('/projects/:project', projectsController.deleteProject);
 
 /*
  * API KEYS
  */
-router.get('/projects/:project/keys', tokensMiddleware.checkToken, apiKeysController.getKeys);
-router.post('/projects/:project/keys/create', tokensMiddleware.checkToken, apiKeysController.postCreateKey);
-router.delete('/projects/:project/keys/:key', tokensMiddleware.checkToken, apiKeysController.deleteKey);
+router.get('/projects/:project/keys', apiKeysController.getKeys);
+router.post('/projects/:project/keys/create', apiKeysController.postCreateKey);
+router.delete('/projects/:project/keys/:key', apiKeysController.deleteKey);
+// Lock api key toggle
 
 /*
  * SERVICES
  */
-// Get Services
-router.get('/projects/:project/services', tokensMiddleware.checkToken, servicesController.getServices);
-router.post('/projects/:project/services/create', tokensMiddleware.checkToken, servicesController.postCreateService);
+router.get('/projects/:project/services', servicesController.getServices);
+router.post('/projects/:project/services/create', servicesController.postCreateService);
 // Update Services
-router.delete('/projects/:project/services/:service', tokensMiddleware.checkToken, servicesController.deleteService);
+router.delete('/projects/:project/services/:service', servicesController.deleteService);
 // Set Service to Enabled or Disabled
 
 module.exports = router;

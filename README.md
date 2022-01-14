@@ -14,3 +14,17 @@ Goal of this project is to learn the following goals. In addition, I hope to use
 - Explore statistics and tracking how many records
 - Explore API keys and better security
 - Explore JWT tokens
+
+## Steps to install
+
+1. git clone repository
+##### Server Setup
+2. run `npm install`
+3. copy `sample.env` to new file called `.env`
+4. fill out `.env` file (or get development env file from @nategrift)
+5. Create a database in your mysql server called `notification-signals`.
+5. run `node migration.js up`
+6. run `npm run dev`
+
+##### Client Setup
+Needs to be filled out when client is created.

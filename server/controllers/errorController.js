@@ -8,7 +8,8 @@ exports.catchErrors = (error, req, res, next) => {
 
     // if error connecting to database
     if (error.message.includes('ECONNREFUSED')) {
-        error.message = "Unable to connect to Database, Sorry for the inconvenience. Please try again later";
+        res.status(500);
+        error.message = "Unable to connect to Database. Please try again later";
     }
 
     if (!res.status) {

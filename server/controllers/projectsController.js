@@ -34,7 +34,7 @@ exports.postCreateProject = async (req, res, next) => {
             throw new Error('You already have a project with this name');
         }
 
-        const project = Project.createAndSave(req.body.name, req.id);
+        const project = await Project.createAndSave(req.body.name, req.id);
 
         res.status(201).json({
             ok: true,
