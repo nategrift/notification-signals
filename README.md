@@ -9,11 +9,13 @@ Goal of this project is to learn the following goals. In addition, I hope to use
 - :white_check_mark: Explore Two Factor Auth
 - Explore Notifications on Platforms
     - :white_check_mark: Discord
+    - Slack
     - IOS?
     - Android?
+    - SMS? (*Future possibility using another service but would need paid plans first as it is more pricy*)
 - Explore statistics and tracking how many records
 - Explore API keys and better security
-- Explore JWT tokens
+- Explore JWT tokens (*Half complete, needs some serious work*)
 
 ## Steps to install
 
