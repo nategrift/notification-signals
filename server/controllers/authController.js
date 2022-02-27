@@ -35,7 +35,7 @@ exports.postLogin = async (req, res, next) => {
         return;
     }
 
-    successResponse(user.username, user.id, res);
+    successResponse(user, res);
 };
 
 exports.postCreateAccount = async (req, res, next) => {
@@ -73,20 +73,12 @@ exports.postCreateAccount = async (req, res, next) => {
 
             mail.send()
 
-            res.json({
-                ok: true,
-                message: `An Email has been sent to ${email}. Please verify before logging in.`,
-                username: username,
-            });
+
+            successResponse(user, res, `An Email has been sent to ${email}. Please verify before logging in.`)
         } else {
             const user = await User.createAndSave(username, email, password);
 
-            res.json({
-                ok: true,
-                message: `DEV: Verified account has been created.`,
-                username: username,
-                user: user
-            });
+            successResponse(user, res, `DEV: Verified account has been created.`)
         }
 
     } catch (err) {
@@ -126,14 +118,13 @@ exports.getVerifyAccount = async (req, res, next) => {
     res.json({
         ok: true,
         message: `Account with email ${email} has been verified. Please log in.`,
-        username: user.username,
     });
 };
 
-function successResponse(username, id, res) {
+function successResponse(user, res, message="Success") {
     // Create base token
     let token = jwt.sign(
-        { username: username, id: id },
+        { username: user.username, id: user.id },
         process.env.TOKEN_SECRET,
         { expiresIn: '7d' }
     );
@@ -141,9 +132,9 @@ function successResponse(username, id, res) {
     // Return token and Username
     res.json({
         ok: true,
-        message: 'Success',
-        username: username,
+        message: message,
+        user: user,
         token: token,
-        tokenExpiration: 86400
+        expireIn: 604800000 // 7 days in milliseconds
     });
 }

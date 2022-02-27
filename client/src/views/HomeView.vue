@@ -1,18 +1,26 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+  <div class="home">HOME</div>
+  <button @click="getProjects">Get Projects</button>
+  {{ projects }}
 </template>
 
 <script lang="ts">
+import { Project } from "@/lib/NotificationSignalTypes";
+import ServerApi from "@/lib/ServerApi";
 import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
 @Options({
-  components: {
-    HelloWorld,
-  },
+  components: {},
 })
-export default class HomeView extends Vue {}
+export default class HomeView extends Vue {
+  projects: Project[] | null = null;
+
+  async getProjects() {
+    const response = await ServerApi.getProjects();
+    if (response.ok) {
+      let projects = response.data as Project[];
+      this.projects = projects;
+    }
+  }
+}
 </script>

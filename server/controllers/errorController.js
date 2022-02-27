@@ -18,7 +18,10 @@ exports.catchErrors = (error, req, res, next) => {
 
     return res.json({
         ok: false,
-        error: error.message,
+        errors: [{
+            param: "root",
+            msg: error.message,
+        }],
     });
 };
 

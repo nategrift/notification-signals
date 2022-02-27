@@ -3,6 +3,7 @@ const express = require('express');
 const projectsController = require('../controllers/projectsController');
 const apiKeysController = require('../controllers/apiKeysController');
 const servicesController = require('../controllers/servicesController');
+const userController = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -30,5 +31,11 @@ router.post('/projects/:project/services/create', servicesController.postCreateS
 // Update Services
 router.delete('/projects/:project/services/:service', servicesController.deleteService);
 // Set Service to Enabled or Disabled
+
+
+/*
+* USER
+*/
+router.get('/users/get-user', userController.getUser);
 
 module.exports = router;
