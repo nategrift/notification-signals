@@ -16,7 +16,7 @@ const authModule: Module<AuthState, State> = {
     token: localStorage.getItem("token"),
     tokenExp: moment(Number(localStorage.getItem("tokenExp"))),
     user: null,
-    loggedIn: false,
+    loggedIn: !!localStorage.getItem("token"),
   },
   getters: {},
   mutations: {

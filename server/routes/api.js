@@ -11,6 +11,7 @@ const router = express.Router();
  * PROJECT
  */
 router.get('/projects', projectsController.getProjects);
+router.get('/projects/:project', projectsController.getProject);
 router.post('/projects/create', projectsController.postCreateProject);
 // update project
 router.delete('/projects/:project', projectsController.deleteProject);

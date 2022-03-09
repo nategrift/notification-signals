@@ -11,6 +11,10 @@ export type PostLoginBody = {
   password: string;
 };
 
+export type PostCreateProjectBody = {
+  name: string;
+};
+
 export type NSResponse<T> = {
   ok: boolean;
   data: ErrorObj[] | T;

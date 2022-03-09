@@ -10,24 +10,40 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/project/:id",
+    name: "project",
+    component: () =>
+      import(/* webpackChunkName: "project" */ "../views/ProjectView.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/project/:id/edit",
+    name: "edit-project",
+    component: () =>
+      import(
+        /* webpackChunkName: "edit-project" */ "../views/EditProjectView.vue"
+      ),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/login",
     name: "login",
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/LoginView.vue"),
+    meta: { requiresNoAuth: true },
   },
   {
     path: "/signup",
     name: "signup",
     component: () =>
       import(/* webpackChunkName: "signup" */ "../views/SignupView.vue"),
+    meta: { requiresNoAuth: true },
   },
   {
     path: "/:pathMatch(.*)*",
-    name: "error404",
+    name: "error",
     component: () =>
-      import(
-        /* webpackChunkName: "error404" */ "../views/errors/Error404View.vue"
-      ),
+      import(/* webpackChunkName: "error" */ "../views/errors/ErrorView.vue"),
   },
 ];
 
@@ -36,11 +52,13 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to) => {
-  if (to.meta.requiresAuth) {
-    if (!store.state.auth.loggedIn) {
-      return { name: "login" };
-    }
+router.beforeEach((to) => {
+  store.dispatch("setError", null);
+
+  if (to.meta.requiresAuth && !store.state.auth.loggedIn) {
+    return { name: "login", query: { target: to.fullPath } };
+  } else if (to.meta.requiresNoAuth && store.state.auth.loggedIn) {
+    return { name: "home" };
   }
 });
 

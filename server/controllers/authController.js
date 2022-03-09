@@ -56,7 +56,15 @@ exports.postCreateAccount = async (req, res, next) => {
         const existingUser = await User.findByUsername(username);
         if (existingUser) {
             res.status(403);
-            throw new Error('Username taken. Please try a different username');
+            res.json({
+                ok: false,
+                errors: [
+                    {
+                        param: "username",
+                        msg: "Username taken, please try again."
+                    }
+                ],
+            });
         }
 
         if (process.env.NODE_ENV == 'production') {

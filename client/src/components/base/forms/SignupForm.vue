@@ -1,17 +1,17 @@
 <template>
-  <div class="signup-form">
-    <label for="username">Username:</label>
+  <form @submit.prevent="submit" class="signup-form">
+    <label for="username">Username</label>
     <NSTextInput name="username" v-model="username" :errors="errors" />
-    <label for="emailv">Email:</label>
+    <label for="email">Email</label>
     <NSTextInput name="email" v-model="email" :errors="errors" />
-    <label for="password">Password:</label>
+    <label for="password">Password</label>
     <NSTextInput
       name="password"
       type="password"
       v-model="password"
       :errors="errors"
     />
-    <label for="verifyPassword">Repeat Password:</label>
+    <label for="verifyPassword">Repeat Password</label>
     <NSTextInput
       name="verifyPassword"
       type="password"
@@ -19,8 +19,8 @@
       :errors="errors"
     />
 
-    <NSButton title="Signup" @buttonClicked="submit" />
-  </div>
+    <NSButton @buttonClicked="submit" type="submit">Signup</NSButton>
+  </form>
 </template>
 
 <script lang="ts">
@@ -86,9 +86,20 @@ export default class SignupForm extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/vars.scss";
 .signup-form {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 200px;
+  justify-content: flex-start;
+
+  label {
+    padding-bottom: 2px;
+    text-align: start;
+  }
+
+  .input {
+    @include text-default;
+  }
 }
 </style>

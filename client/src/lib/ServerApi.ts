@@ -1,5 +1,6 @@
 import { State } from "@/store";
 import axios, { Axios, AxiosError } from "axios";
+import toastr from "toastr";
 import { Store } from "vuex";
 import {
   PostSignupBody,
@@ -8,6 +9,7 @@ import {
   ErrorObj,
   PostLoginBody,
   GetUserSuccessResponse,
+  PostCreateProjectBody,
 } from "./ApiTypes";
 import { Project } from "./NotificationSignalTypes";
 
@@ -44,7 +46,7 @@ export default class ServerApi {
       if (errors) {
         const rootError = errors.find((e) => e.param == "root");
         if (rootError) {
-          this.store.dispatch("setError", rootError.msg);
+          toastr.error(rootError.msg);
         }
       }
       return {
@@ -99,6 +101,46 @@ export default class ServerApi {
   static async getProjects(): Promise<NSResponse<Project[]>> {
     try {
       const response = await ServerApi.http.get(`/projects`);
+      return {
+        ok: true,
+        data: response.data.data,
+      };
+    } catch (e) {
+      return ServerApi.handleErrorResponse(e);
+    }
+  }
+
+  static async getProject(id: number | string): Promise<NSResponse<Project>> {
+    try {
+      const response = await ServerApi.http.get(`/projects/${id}`);
+      return {
+        ok: true,
+        data: response.data.data,
+      };
+    } catch (e) {
+      return ServerApi.handleErrorResponse(e);
+    }
+  }
+
+  static async deleteProject(
+    id: number | string
+  ): Promise<NSResponse<Project>> {
+    try {
+      const response = await ServerApi.http.delete(`/projects/${id}`);
+      return {
+        ok: true,
+        data: response.data.data,
+      };
+    } catch (e) {
+      return ServerApi.handleErrorResponse(e);
+    }
+  }
+
+  static async postCreateProject(
+    body: PostCreateProjectBody
+  ): Promise<NSResponse<AuthSuccessResponse>> {
+    try {
+      const response = await ServerApi.http.post(`/projects/create`, body);
       return {
         ok: true,
         data: response.data,

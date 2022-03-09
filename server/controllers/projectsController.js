@@ -5,15 +5,39 @@ exports.getProjects = async (req, res, next) => {
         const projects = await Project.findAllForUserWithStatistics(req.id);
 
         if (!projects) {
-            res.status(201).json({
+            res.status(200).json({
                 ok: true,
                 message: "No projects at this time. Please create one and come back.",
+                data: [],
             });
         }
 
         res.status(200).json({
             ok: true,
             data: projects
+        });
+    } catch (err) {
+        return next(err);
+    }
+};
+
+exports.getProject = async (req, res, next) => {
+    try {
+        if (!req.params.project) {
+            res.status(400)
+            throw new Error('Please include a valid project_id.');
+        }
+
+        const project = await Project.getById(req.params.project);
+
+        if (!project || project.created_by_id != req.id) {
+            res.status(404)
+            throw new Error("Unable to find project")
+        }
+
+        res.status(200).json({
+            ok: true,
+            data: project
         });
     } catch (err) {
         return next(err);

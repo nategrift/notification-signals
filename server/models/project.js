@@ -2,12 +2,12 @@ const db = require('../util/database');
 
 class Project {
 
-    constructor(id, name, locked, created_by_id, update_at, created_at, deleted_at) {
+    constructor(id, name, locked, created_by_id, updated_at, created_at, deleted_at) {
         this.id = id;
         this.name = name;
         this.locked = locked;
         this.created_by_id = created_by_id;
-        this.update_at = update_at;
+        this.updated_at = updated_at;
         this.created_at = created_at;
         this.deleted_at = deleted_at;
     }
@@ -88,6 +88,22 @@ class Project {
         }
 
         return init(rows[0]);
+    };
+
+    static async getById(projectId) {
+        const [rows] = await db.execute(`
+            SELECT projects.*, users.username as created_by_username from projects
+            LEFT JOIN users
+            ON users.id = projects.created_by_id
+            WHERE projects.id = ?
+            AND projects.deleted_at IS NULL;
+        `, [projectId]);
+
+        if (rows <= 0) {
+            return null;
+        }
+
+        return rows[0];
     };
 
     async delete() {

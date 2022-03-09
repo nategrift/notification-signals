@@ -1,8 +1,8 @@
 <template>
-  <div class="login-form">
-    <label for="username">Username:</label>
+  <form @submit.prevent="submit">
+    <label for="username">Username</label>
     <NSTextInput name="username" v-model="username" :errors="errors" />
-    <label for="password">Password:</label>
+    <label for="password">Password</label>
     <NSTextInput
       name="password"
       type="password"
@@ -10,8 +10,8 @@
       :errors="errors"
     />
 
-    <NSButton title="Login" @buttonClicked="submit" />
-  </div>
+    <NSButton @buttonClicked="submit" type="submit">Login</NSButton>
+  </form>
 </template>
 
 <script lang="ts">
@@ -47,18 +47,14 @@ export default class SignupForm extends Vue {
       this.$store.dispatch("setLoggedIn", true);
 
       // navigate to dashboard
-      this.$router.push({ name: "home" });
+      if (this.$route.query.target) {
+        this.$router.push({ path: this.$route.query.target as string });
+      } else {
+        this.$router.push({ name: "home" });
+      }
     } else {
       this.errors = response.data as ErrorObj[];
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.login-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 200px;
-}
-</style>
