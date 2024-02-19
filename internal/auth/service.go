@@ -12,12 +12,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type Service struct {
-	db *gorm.DB
+type UserRetriever interface {
+	GetUserByID(userID string) (*model.User, error)
 }
 
-func NewService(db *gorm.DB) *Service {
-	return &Service{db}
+type Service struct {
+	db            *gorm.DB
+	userRetriever UserRetriever
+}
+
+func NewService(db *gorm.DB, userRetriever UserRetriever) *Service {
+	return &Service{db, userRetriever}
 }
 
 func (s *Service) Authenticate(username, password string) (*model.User, error) {
@@ -35,6 +40,24 @@ func (s *Service) Authenticate(username, password string) (*model.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (s *Service) ValidateRefreshToken(tokenString string) (uint, error) {
+	// Parse the token
+	var refreshToken model.RefreshToken
+	if err := s.db.Where("token = ?", tokenString).First(&refreshToken).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return 0, errors.New("Token is not a valid refresh token or it has expired")
+		}
+		return 0, err
+	}
+
+	// Check if the token has expired
+	if time.Now().After(refreshToken.ExpiresAt) {
+		return 0, errors.New("Token has expired")
+	}
+
+	return refreshToken.UserID, nil
 }
 
 func (s *Service) CreateAccountService(input CreateAccountRequest) error {

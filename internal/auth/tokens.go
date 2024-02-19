@@ -7,17 +7,25 @@ import (
 	"github.com/nategrift/notification-signals/pkg/model"
 )
 
-var jwtKey = []byte("your_secret_key") // Keep this key secret and consider it configurable
+type CustomClaims struct {
+	UserID uint `json:"user_id"`
+	jwt.StandardClaims
+}
+
+var JWTKey = []byte("your_secret_key")
 
 func GenerateJWT(user *model.User) (string, time.Time, error) {
-	expirationTime := time.Now().Add(15 * time.Minute) // e.g., JWT expires in 15 minutes
-	claims := &jwt.StandardClaims{
-		Subject:   user.Username,
-		ExpiresAt: expirationTime.Unix(),
+	expirationTime := time.Now().Add(15 * time.Minute)
+	claims := &CustomClaims{
+		UserID: user.ID,
+		StandardClaims: jwt.StandardClaims{
+			Subject:   user.Username,
+			ExpiresAt: expirationTime.Unix(),
+		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey) // jwtKey is your secret
+	tokenString, err := token.SignedString(JWTKey)
 	if err != nil {
 		return "", time.Time{}, err
 	}
