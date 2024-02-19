@@ -28,24 +28,24 @@ func NewDatabaseConfig() *Config {
 	}
 }
 
-func SetupDatabase(config *Config) (*gorm.DB, error) {
+func SetupDatabase(config *Config) *gorm.DB {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable TimeZone=Asia/Shanghai",
 		config.DBHost, config.DBUser, config.DBPassword, config.DBPort, config.DBName)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %v", err)
+		panic(fmt.Sprintf("failed to connect to database: %v", err))
 	}
 
 	log.Println("Database connected successfully")
 
 	Migrate(db)
 
-	return db, nil
+	return db
 }
 
 func Migrate(db *gorm.DB) {
-	// currently no data, so we are just migrating
-	err := db.AutoMigrate(&model.User{}, &model.RefreshToken{})
+	// currently no data, so we are just auto migrating
+	err := db.AutoMigrate(&model.User{}, &model.RefreshToken{}, &model.Project{})
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}

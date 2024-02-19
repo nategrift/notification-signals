@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,8 +16,9 @@ func NewHandler(service *Service) *Handler {
 }
 
 type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	RefreshToken string `json:"refreshToken"`
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -26,21 +28,46 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	// Authenticate the user
+	// Check if logging in with a refresh token
+	if req.RefreshToken != "" {
+		// validate refresh token and get user ID
+		userID, err := h.service.ValidateRefreshToken(req.RefreshToken)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
+			return
+		}
+
+		// Generate new JWT token
+		user, _ := h.service.userRetriever.GetUserByID(strconv.FormatUint(uint64(userID), 10))
+		token, tokenExp, err := GenerateJWT(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"user":         user,
+			"token":        token,
+			"tokenExpires": tokenExp.Unix(),
+		})
+		return
+	}
+
+	// authenticate with username and password
 	user, err := h.service.Authenticate(req.Username, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed"})
 		return
 	}
 
-	// Generate JWT token
+	// generate JWT token
 	token, tokenExp, err := GenerateJWT(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
-	// Generate Refresh Token
+	// generate Refresh Token
 	refreshToken, refreshExp, err := h.service.GenerateRefreshToken(user.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})

@@ -1,7 +1,7 @@
 - Auth
     - Login
     - Create Account
-    
+
 Handles managing current user
 - User
     - get
@@ -16,7 +16,7 @@ Handles managing project for one's account
     - Delete
     - Update
 
-Included in each notification request to validate a request works
+Included in each notification request to validate a request works, apiKeys are for projects.
 - apiKeys
     - create
     - delete

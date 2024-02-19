@@ -26,3 +26,15 @@ type RefreshToken struct {
 	UserID    uint      `gorm:"not null"`
 	ExpiresAt time.Time `gorm:"not null"`
 }
+
+type Project struct {
+	gorm.Model
+	Name            string `gorm:"not null"`
+	CreatedByUserID uint   `gorm:"not null"`
+	IsLocked        bool   `gorm:"default:false"`
+}
+
+type ProjectUpdateInput struct {
+	Name     string
+	IsLocked string
+}
