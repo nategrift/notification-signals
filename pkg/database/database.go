@@ -45,7 +45,7 @@ func SetupDatabase(config *Config) *gorm.DB {
 
 func Migrate(db *gorm.DB) {
 	// currently no data, so we are just auto migrating
-	err := db.AutoMigrate(&model.User{}, &model.RefreshToken{}, &model.Project{})
+	err := db.AutoMigrate(&model.User{}, &model.RefreshToken{}, &model.Project{}, &model.ApiKey{})
 	if err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}

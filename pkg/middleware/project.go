@@ -19,7 +19,7 @@ func ProjectAccessMiddleware(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		projectID := c.Param("id") // project id associated
+		projectID := c.Param("projectID") // project id associated
 		if projectID == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Project ID is required"})
 			c.Abort()

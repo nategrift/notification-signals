@@ -42,7 +42,7 @@ func (h *Handler) CreateProject(c *gin.Context) {
 }
 
 func (h *Handler) GetProject(c *gin.Context) {
-	projectID := c.Param("id")
+	projectID := c.Param("projectID")
 	if projectID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Project ID is required"})
 		return
@@ -74,7 +74,7 @@ func (h *Handler) GetAllProjects(c *gin.Context) {
 }
 
 func (h *Handler) DeleteProject(c *gin.Context) {
-	projectID := c.Param("id")
+	projectID := c.Param("projectID")
 	if projectID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Project ID is required"})
 		return
@@ -91,7 +91,7 @@ func (h *Handler) DeleteProject(c *gin.Context) {
 
 func (h *Handler) UpdateProject(c *gin.Context) {
 	var updatedProject model.ProjectUpdateInput
-	projectID := c.Param("id")
+	projectID := c.Param("projectID")
 	if projectID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Project ID is required"})
 		return

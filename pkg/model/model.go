@@ -38,3 +38,11 @@ type ProjectUpdateInput struct {
 	Name     string
 	IsLocked string
 }
+
+type ApiKey struct {
+	gorm.Model
+	Name            string `gorm:"not null"`
+	Key             string `gorm:"not null" json:"-"`
+	ProjectID       uint   `gorm:"not null"`
+	CreatedByUserID uint   `gorm:"not null"`
+}

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/nategrift/notification-signals/internal/apikey"
 	"github.com/nategrift/notification-signals/internal/auth"
 	"github.com/nategrift/notification-signals/internal/project"
 	"github.com/nategrift/notification-signals/internal/user"
@@ -29,11 +30,13 @@ func main() {
 	// auth service needs to fetch users and use other relevant methods which are all defined in an the auth.UserRetriever interface
 	authService := auth.NewService(db, userService)
 	projectService := project.NewService(db)
+	apikeyService := apikey.NewService(db)
 
 	// handlers
 	authHandler := auth.NewHandler(authService)
 	userHandler := user.NewHandler(userService)
 	projectHandler := project.NewHandler(projectService)
+	apiKeyHandler := apikey.NewHandler(apikeyService)
 
 	// setup api group
 	apiGroup := router.Group("/api")
@@ -44,19 +47,29 @@ func main() {
 		authGroup.POST("/login", authHandler.Login)
 		authGroup.POST("/create", authHandler.CreateAccount)
 	}
-	userGroup := apiGroup.Group("/user").Use(middleware.AuthMiddleware())
+	userGroup := apiGroup.Group("/user")
 	{
+		userGroup.Use(middleware.AuthMiddleware())
 		userGroup.GET("/:id", userHandler.GetUser)
 		userGroup.DELETE("/:id", userHandler.DeleteUser)
 		userGroup.PATCH("/:id", userHandler.UpdateUser)
 	}
-	projectGroup := apiGroup.Group("/project").Use(middleware.AuthMiddleware())
+	projectGroup := apiGroup.Group("/project")
 	{
+		projectGroup.Use(middleware.AuthMiddleware())
 		projectGroup.POST("/", projectHandler.CreateProject)
 		projectGroup.GET("/", projectHandler.GetAllProjects)
-		projectGroup.GET("/:id", middleware.ProjectAccessMiddleware(db), projectHandler.GetProject)
-		projectGroup.DELETE("/:id", middleware.ProjectAccessMiddleware(db), projectHandler.DeleteProject)
-		projectGroup.PATCH("/:id", middleware.ProjectAccessMiddleware(db), projectHandler.UpdateProject)
+		projectGroup.GET("/:projectID", middleware.ProjectAccessMiddleware(db), projectHandler.GetProject)
+		projectGroup.DELETE("/:projectID", middleware.ProjectAccessMiddleware(db), projectHandler.DeleteProject)
+		projectGroup.PATCH("/:projectID", middleware.ProjectAccessMiddleware(db), projectHandler.UpdateProject)
+
+		apiKeyGroup := projectGroup.Group("/:projectID/key")
+		{
+			apiKeyGroup.Use(middleware.ProjectAccessMiddleware(db))
+			apiKeyGroup.POST("/", apiKeyHandler.CreateApiKey)
+			apiKeyGroup.GET("/", apiKeyHandler.GetApiKeys)
+			apiKeyGroup.DELETE("/:keyID", apiKeyHandler.DeleteApiKey)
+		}
 	}
 
 	router.Run(":8080")
