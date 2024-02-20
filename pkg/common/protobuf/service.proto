@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package notification;
+
+option go_package = "./pkg/common/protobuf";
+
+// NotificationService defines a service for sending notifications.
+service NotificationService {
+  // Send forwards a notification message to the specified service.
+  rpc Send(NotificationRequest) returns (NotificationResponse) {}
+}
+
+// NotificationRequest contains the details of the notification message.
+message NotificationRequest {
+  string title = 1;
+  string message = 2;
+  string destinationId = 3; 
+}
+
+// NotificationResponse indicates the result of sending a notification.
+message NotificationResponse {
+  bool success = 1;
+}
