@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/nategrift/notification-signals/internal/server/apikey"
 	"github.com/nategrift/notification-signals/internal/server/auth"
+	"github.com/nategrift/notification-signals/internal/server/link"
 	"github.com/nategrift/notification-signals/internal/server/notification"
 	"github.com/nategrift/notification-signals/internal/server/project"
 	"github.com/nategrift/notification-signals/internal/server/user"
@@ -33,13 +34,16 @@ func main() {
 	authService := auth.NewService(db, userService)
 	projectService := project.NewService(db)
 	apikeyService := apikey.NewService(db)
+	linkService := link.NewService(db)
+	notificationService := notification.NewService(db, apikeyService, linkService)
 
 	// handlers
 	authHandler := auth.NewHandler(authService)
 	userHandler := user.NewHandler(userService)
 	projectHandler := project.NewHandler(projectService)
 	apiKeyHandler := apikey.NewHandler(apikeyService)
-	notificationHandler := notification.NewHandler()
+	notificationHandler := notification.NewHandler(notificationService)
+	linkHandler := link.NewHandler(linkService)
 
 	// setup api group
 	apiGroup := router.Group("/api")
@@ -72,6 +76,14 @@ func main() {
 			apiKeyGroup.POST("/", apiKeyHandler.CreateApiKey)
 			apiKeyGroup.GET("/", apiKeyHandler.GetApiKeys)
 			apiKeyGroup.DELETE("/:keyID", apiKeyHandler.DeleteApiKey)
+
+			// TODO: add authentication to make sure a keyID exists
+			linkGroup := apiKeyGroup.Group("/:keyID/link")
+			{
+				linkGroup.POST("/", linkHandler.CreateLink)
+				linkGroup.GET("/", linkHandler.GetAllLinks)
+				linkGroup.DELETE("/:linkID", linkHandler.DeleteLink)
+			}
 		}
 	}
 

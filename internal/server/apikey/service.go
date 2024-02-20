@@ -48,9 +48,18 @@ func (s *Service) GetAllApiKeysForProject(projectID string) ([]model.ApiKey, err
 	return apiKeys, nil
 }
 
-func (s *Service) GetApiKeyByID(apiKeyID string) (*model.Project, error) {
-	var apiKey model.Project
+func (s *Service) GetApiKeyByID(apiKeyID string) (*model.ApiKey, error) {
+	var apiKey model.ApiKey
 	result := s.db.First(&apiKey, "id = ?", apiKeyID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &apiKey, nil
+}
+
+func (s *Service) GetApiKeyByKey(key string) (*model.ApiKey, error) {
+	var apiKey model.ApiKey
+	result := s.db.First(&apiKey, "key = ?", key)
 	if result.Error != nil {
 		return nil, result.Error
 	}

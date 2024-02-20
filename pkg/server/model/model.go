@@ -46,3 +46,21 @@ type ApiKey struct {
 	ProjectID       uint   `gorm:"not null"`
 	CreatedByUserID uint   `gorm:"not null"`
 }
+
+type Link struct {
+	gorm.Model
+	Name          string `gorm:"not null"`
+	ApiKeyID      uint   `gorm:"not null"`
+	ServiceID     uint   `gorm:"not null"`
+	DestinationID string `gorm:"not null"`
+	IsEnabled     bool   `gorm:"default:true"`
+}
+
+type Service struct {
+	Name string
+}
+
+// in the future we want to add more customized messages for each service
+var ServicesMap = map[uint]Service{
+	1: {Name: "Discord"},
+}

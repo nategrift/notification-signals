@@ -18,7 +18,8 @@ Goal of this project is to explore more about the Go language. In addition, I ho
 
 ## Technologies used
 
-- [Golang](https://go.dev)
-- [Gin Web Framework](https://gin-gonic.com/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Docker](https://www.docker.com/)
+- [Golang](https://go.dev) - API and Micro-services are all written in Go
+- [Gin Web Framework](https://gin-gonic.com/) - Gin Web Framework used for primary API
+- [PostgreSQL](https://www.postgresql.org/) - Database of choice to house all of our data
+- [Docker](https://www.docker.com/) - Used for development environment to have a local database easily
+- [gRPC](https://grpc.io/) - Used for communication between Micro-Services and the API
