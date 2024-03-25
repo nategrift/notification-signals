@@ -45,6 +45,7 @@ func main() {
 	notificationHandler := notification.NewHandler(notificationService)
 	linkHandler := link.NewHandler(linkService)
 
+	router.Use(middleware.CORSMiddleware())
 	// setup api group
 	apiGroup := router.Group("/api")
 
